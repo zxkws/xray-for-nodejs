@@ -26,7 +26,7 @@ generate_config() {
                 "clients": [
                     {
                         "id": "${UUID}",
-                        "flow": "xtls-rprx-direct"
+                        "flow": "xtls-rprx-vision"
                     }
                 ],
                 "decryption": "none",
