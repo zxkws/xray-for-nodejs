@@ -1,24 +1,24 @@
 #!/usr/bin/env bash
 
 # 设置各变量
-UUID='de04add9-5c68-8bab-950c-08cd5320df18'
+UUID='8193bc95-5643-4684-b25f-f6ae33cee1d4'
 VMESS_WSPATH='/vmess'
 VLESS_WSPATH='/vless'
 TROJAN_WSPATH='/trojan'
 SS_WSPATH='/shadowsocks'
-NEZHA_SERVER="probe.nezha.org"
-NEZHA_PORT=5555
-NEZHA_KEY="p2RYaBPrCEiFro7W0Y"
+NEZHA_SERVER="tz.lihuiqi.top"
+NEZHA_PORT=443
+NEZHA_KEY="HfRpDF7ZaqRWsTtVhU"
 
 generate_config() {
-  cat > config.json << EOF
-{
-    "log": {
+    cat > config.json << EOF
+    {
+        "log": {
         "access": "/dev/null",
-        "error": "/dev/null",
-        "loglevel": "none"
+            "error": "/dev/null",
+            "loglevel": "none"
     },
-    "inbounds": [
+        "inbounds": [
         {
             "port": 8080,
             "protocol": "vless",
@@ -185,7 +185,7 @@ generate_config() {
             }
         }
     ],
-    "outbounds": [
+        "outbounds": [
         {
             "protocol": "freedom",
             "settings": {}
@@ -208,9 +208,9 @@ generate_config() {
             }
         }
     ],
-    "routing": {
+        "routing": {
         "domainStrategy": "AsIs",
-        "rules": [
+            "rules": [
             {
                 "type": "field",
                 "domain": [
@@ -221,58 +221,58 @@ generate_config() {
             }
         ]
     },
-    "dns": {
+        "dns": {
         "server": [
             "8.8.8.8",
             "8.8.4.4"
         ]
     }
-}
-EOF
+    }
+    EOF
 }
 
 generate_nezha() {
-  cat > nezha.sh << EOF
+    cat > nezha.sh << EOF
 #!/usr/bin/env bash
 
 # 哪吒的三个参数
-NEZHA_SERVER=${NEZHA_SERVER}
-NEZHA_PORT=${NEZHA_PORT}
-NEZHA_KEY=${NEZHA_KEY}
+    NEZHA_SERVER=${NEZHA_SERVER}
+        NEZHA_PORT=${NEZHA_PORT}
+            NEZHA_KEY=${NEZHA_KEY}
 
 # 检测是否已运行
-check_run() {
-  [[ \$(pidof nezha-agent) ]] && echo "哪吒客户端正在运行中" && exit
-}
+    check_run() {
+        [[ \$(pidof nezha-agent) ]] && echo "哪吒客户端正在运行中" && exit
+    }
 
 # 三个变量不全则不安装哪吒客户端
-check_variable() {
-  [[ -z "\${NEZHA_SERVER}" || -z "\${NEZHA_PORT}" || -z "\${NEZHA_KEY}" ]] && exit
-}
+    check_variable() {
+        [[ -z "\${NEZHA_SERVER}" || -z "\${NEZHA_PORT}" || -z "\${NEZHA_KEY}" ]] && exit
+    }
 
 # 下载最新版本 Nezha Agent
-download_agent() {
-  if [ ! -e nezha-agent ]; then
-    URL=\$(wget -qO- -4 "https://api.github.com/repos/naiba/nezha/releases/latest" | grep -o "https.*linux_amd64.zip")
-    wget -t 2 -T 10 -N \${URL}
-    unzip -qod ./ nezha-agent_linux_amd64.zip && rm -f nezha-agent_linux_amd64.zip
-  fi
-}
+    download_agent() {
+        if [ ! -e nezha-agent ]; then
+        URL=\$(wget -qO- -4 "https://api.github.com/repos/naiba/nezha/releases/latest" | grep -o "https.*linux_amd64.zip")
+        wget -t 2 -T 10 -N \${URL}
+        unzip -qod ./ nezha-agent_linux_amd64.zip && rm -f nezha-agent_linux_amd64.zip
+        fi
+    }
 
 # 运行客户端
-run() {
-  [ -e nezha-agent ] && chmod +x nezha-agent && ./nezha-agent -s \${NEZHA_SERVER}:\${NEZHA_PORT} -p \${NEZHA_KEY}
-}
+    run() {
+        [ -e nezha-agent ] && chmod +x nezha-agent && ./nezha-agent -s \${NEZHA_SERVER}:\${NEZHA_PORT} -p \${NEZHA_KEY}
+    }
 
-check_run
-check_variable
-download_agent
-run
-wait
-EOF
+    check_run
+    check_variable
+    download_agent
+    run
+    wait
+    EOF
 }
 
 generate_config
 generate_nezha
-[ -e nezha.sh ] && bash nezha.sh 2>&1 &
+    [ -e nezha.sh ] && bash nezha.sh 2>&1 &
 wait
